@@ -1,4 +1,4 @@
-"""Reusable Smith chart renderer based on Python and Matplotlib."""
+"""基于 Python 与 Matplotlib 的可复用史密斯圆图绘制引擎。"""
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -19,7 +19,7 @@ class SmithPoint:
 
 
 class SmithChart:
-    """Draw Smith-chart grids and reusable teaching annotations."""
+    """绘制史密斯圆图网格与可复用的教学标注。"""
 
     GRID_PRESETS = {
         "sparse": {
@@ -263,7 +263,7 @@ class SmithChart:
         color: str,
         family: str,
     ) -> None:
-        """Place signed imaginary-family labels outside the Smith-chart boundary."""
+        """将带正负号的虚部刻度置于史密斯圆外侧。"""
         rotation = 90 if family == "impedance" else -90
         base_radius = 1.075 if family == "impedance" else 1.235
         minimum_angle = {

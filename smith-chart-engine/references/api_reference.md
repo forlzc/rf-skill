@@ -1,43 +1,43 @@
-# API Reference
+# API 参考
 
-## SmithChart constructor
+## SmithChart 构造函数
 
-### Grid layers
+### 网格图层
 
-- `show_impedance=True`: draw the solid impedance grid.
-- `show_admittance=False`: draw the dashed admittance grid when enabled.
-- `show_scale_labels=True`: show normalized resistance, conductance, reactance, and susceptance scale numbers.
-- Render all scale text in black.
-- Rotate impedance real and imaginary scale numbers right by 90 degrees; place real-axis numbers above the horizontal axis.
-- Rotate admittance real and imaginary scale numbers left by 90 degrees; place real-axis numbers below the horizontal axis.
-- Show imaginary-family labels as signed values such as `+0.5` and `-0.5`, without `x` or `b` prefixes.
-- Place all imaginary-family labels outside the Smith-chart boundary and stagger neighboring radii to reduce overlap.
-- Draw a square white box with a thin gray border around each imaginary-family label.
-- Automatically detect labels with insufficient angular spacing and move them to additional radial layers, with spacing adapted to sparse, standard, and dense grids.
+- `show_impedance=True`：绘制实线阻抗网格。
+- `show_admittance=False`：启用时绘制虚线导纳网格。
+- `show_scale_labels=True`：显示归一化电阻、电导、电抗与电纳刻度数字。
+- 所有刻度文字为黑色。
+- 阻抗实部与虚部刻度向右旋转 90 度；实轴刻度置于横轴上方。
+- 导纳实部与虚部刻度向左旋转 90 度；实轴刻度置于横轴下方。
+- 虚部刻度仅显示带正负号数值（如 `+0.5`、`-0.5`），不加 `x` 或 `b` 前缀。
+- 所有虚部刻度置于史密斯圆外侧，相邻径向错开以减少重叠。
+- 每个虚部刻度外加白底细灰边方框。
+- 自动检测角度间距不足的刻度，将其移到额外径向层，层间距随稀疏/标准/密集网格调整。
 
-### Image size
+### 图片尺寸
 
-- `figsize=(8, 8)`: set the Matplotlib canvas in inches.
-- `width_px` and `height_px`: set the requested canvas size in pixels. These values take precedence over `figsize`.
-- `dpi=160`: convert between pixel and inch dimensions and control raster output resolution.
+- `figsize=(8, 8)`：以英寸设置 Matplotlib 画布。
+- `width_px` 与 `height_px`：以像素设置画布尺寸，优先级高于 `figsize`。
+- `dpi=160`：在像素与英寸间换算，并控制位图输出分辨率。
 
-Example:
+示例：
 
 ```python
 chart = SmithChart(width_px=1800, height_px=1800, dpi=180)
 ```
 
-### Automatic grid density
+### 网格密度自动调整
 
-Set `grid_density="auto"` to select the number of grid-line families from the shorter image side:
+设置 `grid_density="auto"`，依据图片较短边选择网格线族数量：
 
-- Below 700 px: `sparse` grid.
-- From 700 px to below 1400 px: `standard` grid.
-- At least 1400 px: `dense` grid.
+- 小于 700 px：稀疏（sparse）网格。
+- 700 px 至 1400 px（不含）：标准（standard）网格。
+- 大于等于 1400 px：密集（dense）网格。
 
-Set `grid_density` to `sparse`, `standard`, or `dense` to force a preset. A larger image therefore receives more resistance, reactance, conductance, and susceptance lines, while a smaller image receives fewer lines.
+显式设置 `grid_density` 为 `sparse`、`standard` 或 `dense` 可强制使用预设。因此图片越大电阻、电抗、电导、电纳线越多，图片越小线越少。
 
-Manually specified values always override their corresponding automatic preset:
+手动指定的数值始终覆盖对应的自动预设：
 
 ```python
 chart = SmithChart(
@@ -47,39 +47,39 @@ chart = SmithChart(
 )
 ```
 
-### Styling
+### 样式
 
-- `grid_linewidth=0.9`: control impedance and admittance grid line width.
-- `label_fontsize=None`: select label size automatically from output dimensions; supply a number to override it.
-- `overlay_scale=1.35`: uniformly enlarge user-added points, labels, line segments, arrows, movement arcs, and SWR circles. Explicit values supplied through `style` remain higher priority.
+- `grid_linewidth=0.9`：控制阻抗与导纳网格线宽。
+- `label_fontsize=None`：依据输出尺寸自动选择字号；传入数字可覆盖。
+- `overlay_scale=1.35`：统一放大用户添加的点、标注、线段、箭头、移动弧与驻波圆；通过 `style` 显式传入的值优先级更高。
 
-## Point methods
+## 点的方法
 
-- `add_impedance(r, x, label=None, **style)`
-- `add_admittance(g, b, label=None, **style)`
-- `add_gamma(gamma, label=None, **style)`
-- `add_label(point, text, dx=0.035, dy=0.035, **style)`
+- `add_impedance(r, x, label=None, **style)`：添加阻抗点（归一化 `z = r + jx`）。
+- `add_admittance(g, b, label=None, **style)`：添加导纳点（归一化 `y = g + jb`）。
+- `add_gamma(gamma, label=None, **style)`：按反射系数直接添加点。
+- `add_label(point, text, dx=0.035, dy=0.035, **style)`：为点或坐标添加文字标注。
 
-## Drawing methods
+## 绘制方法
 
-- `add_line(start, end, arrow=False, **style)`
-- `draw_swr_circle(point, **style)`
-- `flip_to_admittance(point, label=None, connect=True)`
-- `move_wavelength(start, distance, toward_generator=True, label=None, draw_arc=True)`
+- `add_line(start, end, arrow=False, **style)`：连接两点，可加箭头。
+- `draw_swr_circle(point, **style)`：绘制等驻波比圆（`|Γ| = 常数`）。
+- `flip_to_admittance(point, label=None, connect=True)`：阻抗↔导纳 180 度翻转，并可选连线。
+- `move_wavelength(start, distance, toward_generator=True, label=None, draw_arc=True)`：沿等 `|Γ|` 圆按波长移动，可画弧与箭头。
 
-## Batch operations
+## 批量操作
 
-Supported `type` values for `execute()`:
+`execute()` 支持的 `type` 取值：
 
-- `impedance`: requires `r`, `x`; optional `label`, `style`.
-- `admittance`: requires `g`, `b`; optional `label`, `style`.
-- `gamma`: requires `gamma`; optional `label`, `style`.
-- `label`: requires `point`, `text`; optional `style`.
-- `line`: requires `start`, `end`; optional `arrow`, `style`.
-- `swr`: requires `point`; optional `style`.
-- `flip`: requires `point`; optional `label`, `connect`.
-- `move`: requires `start`, `distance`; optional `toward_generator`, `label`, `draw_arc`.
+- `impedance`（阻抗点）：必填 `r`、`x`；可选 `label`、`style`。
+- `admittance`（导纳点）：必填 `g`、`b`；可选 `label`、`style`。
+- `gamma`（反射系数点）：必填 `gamma`；可选 `label`、`style`。
+- `label`（文字标注）：必填 `point`、`text`；可选 `style`。
+- `line`（线段/箭头）：必填 `start`、`end`；可选 `arrow`、`style`。
+- `swr`（驻波圆）：必填 `point`；可选 `style`。
+- `flip`（阻抗导纳翻转）：必填 `point`；可选 `label`、`connect`。
+- `move`（按波长移动）：必填 `start`、`distance`；可选 `toward_generator`、`label`、`draw_arc`。
 
-## Export
+## 导出
 
-Call `save(path)` with `.png`, `.svg`, or `.pdf`. Call `close()` after export in batch workflows.
+调用 `save(path)`，扩展名支持 `.png`、`.svg`、`.pdf`。批量流程导出后调用 `close()`。
